@@ -196,6 +196,11 @@ class ChartManager {
     }
 
     init() {
+        if (typeof Chart === 'undefined') {
+            console.warn('Chart.js not loaded. Skipping chart initialization.');
+            return;
+        }
+
         const gradient = this.ctx.createLinearGradient(0, 0, 0, 400);
         gradient.addColorStop(0, 'rgba(139, 92, 246, 0.5)');
         gradient.addColorStop(1, 'rgba(139, 92, 246, 0.0)');
@@ -378,10 +383,16 @@ class App {
     }
 
     init() {
-        this.chartManager.init();
-        this.refreshUI();
-        this.bindEvents();
+        this.bindEvents(); // Bind events first so UI works even if Chart fails
         if (window.lucide) lucide.createIcons();
+
+        try {
+            this.chartManager.init();
+        } catch (e) {
+            console.error('Chart initialization failed:', e);
+        }
+
+        this.refreshUI();
     }
 
     refreshUI() {
