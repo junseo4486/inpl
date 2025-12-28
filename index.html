@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Personal Inflation Calculator</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <i data-lucide="trending-up"></i>
+                <span>MyInflation</span>
+            </div>
+            <ul class="nav-links">
+                <li class="active"><a href="#" id="nav-dashboard"><i data-lucide="layout-dashboard"></i> 대시보드</a></li>
+                <li><a href="#" id="nav-items"><i data-lucide="shopping-basket"></i> 품목 관리</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1>나만의 <strong>체감 물가</strong> 그래프</h1>
+                <div class="user-profile">
+                    <span class="badge">Beta</span>
+                    <button class="icon-btn" id="refresh-all-btn" title="전체 가격 업데이트">
+                        <i data-lucide="refresh-cw"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div id="view-dashboard" class="view-section active">
+                <!-- KPI Cards -->
+                <div class="kpi-grid">
+                    <div class="card kpi-card glass" id="inflation-card">
+                        <div class="card-header">
+                            <span>나의 물가 상승률</span>
+                            <i data-lucide="percent" class="icon-sm"></i>
+                        </div>
+                        <div class="card-value high" id="inflation-rate-display">--%</div>
+                        <div class="card-sub">지난달 대비</div>
+                    </div>
+
+                    <div class="card kpi-card glass" id="spend-card">
+                        <div class="card-header">
+                            <span>예상 월 지출액</span>
+                            <i data-lucide="wallet" class="icon-sm"></i>
+                        </div>
+                        <div class="card-value" id="total-spend-display">-- KRW</div>
+                        <div class="card-sub">현재 장바구니 기준</div>
+                    </div>
+                </div>
+
+                <!-- Chart Section -->
+                <div class="card chart-card glass">
+                    <h3>물가 변동 추이</h3>
+                    <div class="chart-container">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-items" class="view-section" style="display: none;">
+                <div class="items-header">
+                    <h2>관리 품목</h2>
+                    <button class="btn-primary" id="add-item-btn">
+                        <i data-lucide="plus"></i> 품목 추가
+                    </button>
+                </div>
+                <div class="items-list" id="items-list">
+                    <!-- Items will be injected here via JS -->
+                    <div class="empty-state">
+                        <p>등록된 품목이 없습니다.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Adding Item -->
+    <div id="item-modal" class="modal hidden">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h3>품목 추가</h3>
+                <button class="close-btn" id="close-modal"><i data-lucide="x"></i></button>
+            </div>
+            <form id="item-form">
+                <div class="form-group">
+                    <label>품목명 (예: 계란)</label>
+                    <input type="text" id="item-name" required placeholder="품목 이름만 입력 (예: 라면, 우유)">
+                    <p class="hint">에이전트가 이 이름으로 쇼핑몰을 검색합니다.</p>
+                </div>
+                <div class="form-group row">
+                    <div>
+                        <label>단가 (1개 기준)</label>
+                        <input type="number" id="item-price" required placeholder="0">
+                    </div>
+                    <div>
+                        <label>지난 단가</label>
+                        <input type="number" id="item-prev-price" required placeholder="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>구매 수량</label>
+                    <input type="number" id="item-qty" value="1" min="1">
+                </div>
+                <div class="form-group"
+                    style="text-align: right; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <label style="display: inline; margin-right: 0.5rem;">예상 합계 금액:</label>
+                    <span id="total-calc-display"
+                        style="font-size: 1.2rem; font-weight: 700; color:var(--accent);">0원</span>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-primary">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
